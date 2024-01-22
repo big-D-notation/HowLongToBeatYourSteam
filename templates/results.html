@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLTBYS - Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='clean.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+    <style>
+        .sorted-asc::after {
+            content: ' ▲';
+        }
+
+        .sorted-desc::after {
+            content: ' ▼';
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <main>
+        <div class="filters-section">
+            <div class="sort-by">
+                Sort by
+            </div>
+            <button onclick="sortTable('GameName')">Name</button>
+            <button onclick="sortTable('MainStory')">Main Story</button>
+            <button onclick="sortTable('MainExtra')">Main + Extra</button>
+            <button onclick="sortTable('Completionist')">Completionist</button>
+        </div>
+    
+        <table id="gamesTable">
+            <thead>
+                <tr>
+                    <th>Game Name</th>
+                    <th>Game Type</th>
+                    <th>Main Story</th>
+                    <th>Main + Extra</th>
+                    <th>Completionist</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in results %}
+                    <tr>
+                        <td>{{ game['GameName'] }}</td>
+                        <td class="center">{{ game['GameType'] }}</td>
+                        <td class="center">{{ game['MainStory'] }}</td>
+                        <td class="center">{{ game['MainExtra'] }}</td>
+                        <td class="center">{{ game['Completionist'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        function sortTable(columnName) {
+            let table, rows, data, switching, i, shouldSwitch;
+            table = document.getElementById("gamesTable");
+            switching = true;
+
+            let sortMap = {
+                'GameName'      : 0,
+                'MainStory'     : 2,
+                'MainExtra'     : 3,
+                'Completionist' : 4
+            }
+
+            // Collect data from the table
+            data = [];
+            rows = table.rows;
+            for (i = 1; i < rows.length; i++) {
+                let rowData = {
+                    row: rows[i],
+                    value: rows[i].getElementsByTagName("TD")[sortMap[columnName]].innerText
+                };
+                
+                data.push(rowData);
+            }
+
+            // Determine the current sorting order
+            let sortOrder = "asc";
+            if (rows[0].getElementsByTagName("TH")[sortMap[columnName]].classList.contains("sorted-desc")) {
+                sortOrder = "asc";
+            } else if (rows[0].getElementsByTagName("TH")[sortMap[columnName]].classList.contains("sorted-asc")) {
+                sortOrder = "desc";
+            }
+
+            // Sort the data
+            data.sort((a, b) => {
+                var x = isNaN(a.value) ? a.value.toLowerCase() : parseInt(a.value);
+                var y = isNaN(b.value) ? b.value.toLowerCase() : parseInt(b.value);
+
+                // Change the sorting order if needed
+                if (sortOrder === "asc") {
+                    return x > y ? 1 : -1;
+                } else {
+                    return x < y ? 1 : -1;
+                }
+            });
+
+            // Update the table with sorted data
+            for (i = 0; i < data.length; i++) {
+                rows[i + 1].parentNode.insertBefore(data[i].row, rows[i + 1]);
+            }
+
+            // Remove existing sorting indicators
+            for (i = 0; i < rows[0].cells.length; i++) {
+                rows[0].cells[i].classList.remove("sorted-asc");
+                rows[0].cells[i].classList.remove("sorted-desc");
+            }
+
+            // Add sorting indicator to the selected column
+            rows[0].getElementsByTagName("TH")[sortMap[columnName]].classList.add("sorted-" + sortOrder);
+        }
+
+    </script>
+</body>
+</html>
