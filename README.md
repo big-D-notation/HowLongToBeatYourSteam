@@ -12,5 +12,5 @@ This project uses three third-party libraries:
 
 ## How it works?
 
-After you enter your Steam ID in correspomding field and press submit button, you will see a sortable table with your games and time-to-beat data. Response times depends on how much steam games do you have
+After you enter your Steam ID in corresponding field and press submit button, you will see a sortable table with your games and time-to-beat data. Response time depends on how much steam games do you have
 
