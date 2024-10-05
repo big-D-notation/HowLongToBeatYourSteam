@@ -11,11 +11,8 @@ class GamesInfoGetter:
         game_names = api_handler.get_game_names_by_ids(game_ids)
 
         games_info = []
-        i = 0
+
         for game_name in game_names:
-            i += 1
-            if i == 20:
-                break
             results = HowLongToBeat().search(game_name)
             if results is not None and len(results) > 0:
                 result = max(results, key=lambda element: element.similarity)
